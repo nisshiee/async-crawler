@@ -40,8 +40,14 @@ testOptions in (Test, test) += Tests.Argument("console", "html", "junitxml")
 
 initialCommands := """
 import scalaz._, Scalaz._
+import java.nio.charset.Charset
+import scala.concurrent.duration._
+import org.nisshiee.crawler._
 """
 
+cleanupCommands := """
+Crawler.shutdown
+"""
 
 // ========== for sonatype oss publish ==========
 
