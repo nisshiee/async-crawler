@@ -9,9 +9,9 @@ scalaVersion := "2.10.2"
 libraryDependencies ++= Seq(
    "org.scalaz" %% "scalaz-core" % "7.0.3"
   ,"org.typelevel" %% "scalaz-contrib-210" % "0.1.5"
-  ,"com.typesafe.akka" %% "akka-actor" % "2.2.0"
+  ,"com.typesafe.akka" %% "akka-actor" % "2.2.1"
   ,"net.databinder.dispatch" %% "dispatch-core" % "0.11.0"
-  ,"org.specs2" %% "specs2" % "1.14" % "test"
+  ,"org.specs2" %% "specs2" % "2.2" % "test"
   ,"org.typelevel" %% "scalaz-specs2" % "0.1.3" % "test"
   ,"junit" % "junit" % "4.11" % "test"
   ,"org.pegdown" % "pegdown" % "1.2.1" % "test"
@@ -40,8 +40,14 @@ testOptions in (Test, test) += Tests.Argument("console", "html", "junitxml")
 
 initialCommands := """
 import scalaz._, Scalaz._
+import java.nio.charset.Charset
+import scala.concurrent.duration._
+import org.nisshiee.crawler._
 """
 
+cleanupCommands := """
+Crawler.shutdown
+"""
 
 // ========== for sonatype oss publish ==========
 

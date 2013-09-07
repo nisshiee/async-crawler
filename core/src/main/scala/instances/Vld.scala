@@ -1,0 +1,15 @@
+package org.nisshiee.crawler
+
+import scalaz._, Scalaz._
+
+trait VldInstances {
+
+  type Vld[+T] = ({ type M[+T] = ValidationNel[CrawlError, T] })#M[T]
+
+  implicit object vldInstance extends Monad[Vld] {
+
+    override def bind[A, B](fa: Vld[A])(f: (A) => Vld[B]): Vld[B] = fa flatMap f
+
+    override def point[A](a: => A): Vld[A] = a.successNel
+  }
+}
