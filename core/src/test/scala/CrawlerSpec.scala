@@ -19,6 +19,10 @@ class CrawlerSpec extends Specification { def is =
         "可変長引数でGetParameterを渡せる(パラメータ2つ)"                       ! e8^
         "Seq[(String, String)]を可変長引数展開で渡せる"                         ! e9^
                                                                                 p^
+      "Post関連"                                                                ^
+        "ParameterなしPOSTリクエスト"                                           ! e10^
+        "ParameterなしPOSTリクエスト"                                           ! e11^
+                                                                                p^
                                                                                 p^
     "異常系"                                                                    ^
       "接続できないURLにリクエスト送信したらConnectionErrorが返る"              ! e5^
@@ -73,5 +77,14 @@ class CrawlerSpec extends Specification { def is =
       case body: String => (body must contain(""""arg1": "value1"""")) and (body must contain(""""arg2": "value2""""))
     }
   }
+
+  def e10 = Crawler.post("http://httpbin.org/post"){ s: String => s.successNel }.result() must beSuccessful.like {
+    case body: String => body must contain(""""args": {}""")
+  }
+
+  def e11 =
+    Crawler.post("http://httpbin.org/post", "arg1" -> "value1"){ s: String => s.successNel }.result() must beSuccessful.like {
+      case body: String => body must contain(""""arg1": "value1"""")
+    }
 }
 
