@@ -37,6 +37,13 @@ testOptions in (Test, test) += Tests.Argument("console", "html", "junitxml")
 
 initialCommands := """
 import scalaz._, Scalaz._
+import org.jsoup.nodes._
+import org.nisshiee.crawler._
+import org.nisshiee.crawler.jsoup._
+"""
+
+cleanupCommands := """
+Crawler.shutdown
 """
 
 
