@@ -9,7 +9,7 @@ import org.json4s.jackson.JsonMethods._
 
 import org.nisshiee.crawler._
 
-class JsoupCrawlerSpec extends Specification { def is =
+class Json4sCrawlerSpec extends Specification { def is =
 
   "JValueInstance結合テスト"                                                    ^
     "正常系"                                                                    ^
