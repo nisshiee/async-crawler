@@ -17,4 +17,9 @@ object AsyncCrawlerBuild extends Build {
      id = "filedl"
     ,base = file("filedl")
   ) dependsOn core
+
+  lazy val json4s = Project (
+     id = "json4s"
+    ,base = file("json4s")
+  ) dependsOn core
 }
