@@ -13,11 +13,18 @@ import akka.pattern.ask
 import dispatch._
 import scalaz._, Scalaz._
 
-sealed trait Crawler
+sealed trait Crawler {
+
+  def apply[A, T]
+  (urlStr: String, params: (String, String)*)
+  (parse: A => ValidationNel[ParseError, T])
+  (implicit parser: Parser[A], timeout: Timeout = Timeout(60), retry: Retry = Retry(3), interval: Interval = Interval(1000))
+  : Fv[T]
+}
 
 object Crawler extends Crawler {
 
-  def apply[A, T]
+  override def apply[A, T]
   (urlStr: String, params: (String, String)*)
   (parse: A => ValidationNel[ParseError, T])
   (implicit parser: Parser[A], timeout: Timeout = Timeout(60), retry: Retry = Retry(3), interval: Interval = Interval(1000))

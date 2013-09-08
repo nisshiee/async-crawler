@@ -12,4 +12,9 @@ object AsyncCrawlerBuild extends Build {
      id = "jsoup"
     ,base = file("jsoup")
   ) dependsOn core
+
+  lazy val filedl = Project (
+     id = "filedl"
+    ,base = file("filedl")
+  ) dependsOn core
 }
