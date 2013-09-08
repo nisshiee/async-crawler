@@ -2,7 +2,7 @@ name := "async-crawler-filedl"
 
 organization := "org.nisshiee"
 
-version := "1.0.0"
+version := "0.0.1-SNAPSHOT"
 
 scalaVersion := "2.10.2"
 

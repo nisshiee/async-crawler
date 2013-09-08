@@ -18,15 +18,15 @@ How to use
 ### sbt
 
 ```
-libraryDependencies += "org.nisshiee" %% "async-crawler" % "1.0.0"
+libraryDependencies += "org.nisshiee" %% "async-crawler" % "0.0.1-SNAPSHOT"
 
 // 各種解析補助モジュールを利用する場合は以下のモジュールを利用できます
 
-libraryDependencies += "org.nisshiee" %% "async-crawler-jsoup" % "1.0.0"
+libraryDependencies += "org.nisshiee" %% "async-crawler-jsoup" % "0.0.1-SNAPSHOT"
 
-libraryDependencies += "org.nisshiee" %% "async-crawler-json4s" % "1.0.0"
+libraryDependencies += "org.nisshiee" %% "async-crawler-json4s" % "0.0.1-SNAPSHOT"
 
-libraryDependencies += "org.nisshiee" %% "async-crawler-filedl" % "1.0.0"
+libraryDependencies += "org.nisshiee" %% "async-crawler-filedl" % "0.0.1-SNAPSHOT"
 ```
 
 ### coding example
