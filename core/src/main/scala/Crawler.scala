@@ -21,9 +21,22 @@ object Crawler extends Crawler {
   (urlStr: String, params: (String, String)*)
   (parse: A => ValidationNel[ParseError, T])
   (implicit parser: Parser[A], timeout: Timeout = Timeout(60), retry: Retry = Retry(3), interval: Interval = Interval(1000))
+  : Fv[T] = sendRequest(Get)(urlStr, params: _*)(parse)
+
+  def post[A, T]
+  (urlStr: String, params: (String, String)*)
+  (parse: A => ValidationNel[ParseError, T])
+  (implicit parser: Parser[A], timeout: Timeout = Timeout(60), retry: Retry = Retry(3), interval: Interval = Interval(1000))
+  : Fv[T] = sendRequest(Post)(urlStr, params: _*)(parse)
+
+  def sendRequest[A, T]
+  (method: Method)
+  (urlStr: String, params: (String, String)*)
+  (parse: A => ValidationNel[ParseError, T])
+  (implicit parser: Parser[A], timeout: Timeout = Timeout(60), retry: Retry = Retry(3), interval: Interval = Interval(1000))
   : Fv[T] = {
     implicit val t = ATimeout(30 days)
-    (actor ? Get(urlStr, params, timeout, retry, interval) map {
+    (actor ? Req(urlStr, params, method, timeout, retry, interval) map {
       case Success(bodyBytes: Array[Byte]) =>
         parser.parse(bodyBytes) flatMap { a =>
           try parse(a) catch { case e: Throwable => ParseError(s"$urlStr: ${e.toString}").failNel }
@@ -40,21 +53,35 @@ object Crawler extends Crawler {
     .setRequestTimeoutInMs(60 * 1000)
   }
 
-  case class Get(urlStr: String, params: Traversable[(String, String)], timeout: Timeout, retry: Retry, interval: Interval)
+  case class Req(
+     urlStr: String
+    ,params: Traversable[(String, String)]
+    ,method: Method
+    ,timeout: Timeout
+    ,retry: Retry
+    ,interval: Interval
+  )
+
+  sealed trait Method
+  case object Get extends Method
+  case object Post extends Method
 
   class CrawlActor extends Actor {
 
     def receive = {
-      case Get(urlStr, _, _, Retry(r), _) if r <= 0 => sender ! ConnectionError(urlStr).failure
-      case Get(urlStr, params, Timeout(t), Retry(r), Interval(i)) => {
+      case Req(urlStr, _, _, _, Retry(r), _) if r <= 0 => sender ! ConnectionError(urlStr).failure
+      case Req(urlStr, params, method, Timeout(t), Retry(r), Interval(i)) => {
         val resultOpt = allCatch opt {
-          val svc = url(urlStr) <<? params
+          val svc = method match {
+            case Get => url(urlStr) <<? params
+            case Post => url(urlStr) << params
+          }
           val future = http(svc OK as.Bytes)
           Await.result(future, t seconds)
         }
         resultOpt match {
           case Some(bodyBytes) => sender ! bodyBytes.success
-          case None => self.tell(Get(urlStr, params, Timeout(t), Retry(r - 1), Interval(i)), sender)
+          case None => self.tell(Req(urlStr, params, method, Timeout(t), Retry(r - 1), Interval(i)), sender)
         }
         if (i > 0)
           Thread.sleep(i)
