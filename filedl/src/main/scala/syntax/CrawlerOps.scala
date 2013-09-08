@@ -17,7 +17,7 @@ class CrawlerOps(val self: Crawler) extends AnyVal {
   }
 }
 
-trait ToOptionOps {
+trait ToCrawlerOps {
 
-  implicit def ToOptionOps(crawler: Crawler) = new CrawlerOps(crawler)
+  implicit def ToCrawlerOps(crawler: Crawler) = new CrawlerOps(crawler)
 }
